@@ -1,15 +1,15 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+ <TaktTime/>
 </template>
 
+
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TaktTime from "./components/TaktTime.vue"
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    TaktTime
   }
 }
 </script>
@@ -20,7 +20,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #119f7a;
   margin-top: 60px;
 }
 </style>
