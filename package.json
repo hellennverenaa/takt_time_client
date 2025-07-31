@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
+    "lucide-vue-next": "^0.535.0",
     "vue": "^3.5.18",
     "ws": "^8.18.3"
   },
