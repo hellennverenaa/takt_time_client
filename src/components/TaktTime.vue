@@ -1,12 +1,7 @@
 <template>
-  <div 
-    :class="[
-      'min-h-screen w-full flex flex-col transition-colors duration-500',
-      getBackgroundColor()
-    ]"
-  >
+  <div :class="['min-h-screen w-full flex flex-col transition-colors duration-500', getBackgroundColor()]">
     <!-- Barra de controles (aparece ao passar o mouse no topo) -->
-    <div 
+    <div
       class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300"
       :style="{ transform: showControls ? 'translateY(0)' : 'translateY(-100%)' }"
       @mouseenter="showControls = true"
@@ -21,10 +16,10 @@
           >
             <BellIcon v-if="soundEnabled" class="h-4 w-4" />
             <BellOffIcon v-else class="h-4 w-4" />
-            Som {{ soundEnabled ? 'Ativo' : 'Inativo' }}
+            Som {{ soundEnabled ? "Ativo" : "Inativo" }}
           </button>
         </div>
-        
+
         <div class="flex items-center gap-2">
           <button
             @click="toggleTimer"
@@ -32,9 +27,9 @@
           >
             <PauseIcon v-if="isRunning" class="h-4 w-4" />
             <PlayIcon v-else class="h-4 w-4" />
-            {{ isRunning ? 'Pausar' : 'Iniciar' }}
+            {{ isRunning ? "Pausar" : "Iniciar" }}
           </button>
-          
+
           <button
             @click="resetTimer"
             class="flex items-center gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20 px-3 py-1 rounded border transition-colors"
@@ -42,14 +37,14 @@
             <RotateCcwIcon class="h-4 w-4" />
             Reset
           </button>
-          
+
           <button
             @click="simulateWarning"
             class="flex items-center gap-2 bg-yellow-600/80 border-yellow-500 text-white hover:bg-yellow-600 px-3 py-1 rounded border transition-colors"
           >
             Teste Atenção
           </button>
-          
+
           <button
             @click="simulateAlarm"
             class="flex items-center gap-2 bg-red-600/80 border-red-500 text-white hover:bg-red-600 px-3 py-1 rounded border transition-colors"
@@ -61,50 +56,34 @@
     </div>
 
     <!-- Área para mostrar controles -->
-    <div 
-      class="h-4 w-full cursor-pointer"
-      @mouseenter="showControls = true"
-      @mouseleave="showControls = false"
-    />
+    <div class="h-4 w-full cursor-pointer" @mouseenter="showControls = true" @mouseleave="showControls = false" />
 
     <!-- Conteúdo principal -->
-    <div class="flex-1 flex flex-col items-center justify-center p-8">
+    <div class="flex-1 flex flex-col items-center justify-center p-2">
       <!-- Logo/Nome DASS -->
-      <div class="mb-12">
-        <h1 :class="[
-          'text-6xl md:text-7xl lg:text-8xl font-black tracking-wider drop-shadow-lg',
-          getTextColor()
-        ]">
+      <div class="mb-3">
+        <h1 :class="['text-6xl md:text-7xl lg:text-8xl font-black tracking-wider drop-shadow-lg', getTextColor()]">
           DASS
         </h1>
-        <div :class="[
-          'text-center mt-4 text-xl opacity-80',
-          getTextColor()
-        ]">
-          Sistema de Monitoramento Industrial
+
+        <div class="flex flex-row">
+          <ClockIcon :class="['h-8 w-8', getTextColor()]" />
+          <h2 :class="['text-3xl md:text-4xl font-bold ml-2', getTextColor()]">TAKT TIME</h2>
         </div>
       </div>
 
       <!-- Barra de Takt Time - Elemento Principal -->
       <div class="w-full max-w-4xl mb-8">
         <!-- Título da barra -->
-        <div class="text-center mb-4 flex items-center justify-center gap-3">
-          <ClockIcon :class="['h-8 w-8', getTextColor()]" />
-          <h2 :class="[
-            'text-3xl md:text-4xl font-bold',
-            getTextColor()
-          ]">
-            TAKT TIME
-          </h2>
-        </div>
+        <div class="text-center mb-4 flex items-center justify-center gap-3"></div>
 
         <!-- Container da barra de progresso -->
         <div class="bg-gray-200 rounded-lg h-20 md:h-24 lg:h-28 overflow-hidden shadow-lg border-4 border-gray-300">
-          <div 
+          <div
             :class="[
               'h-full transition-all duration-1000 ease-linear flex items-center justify-center relative',
               getProgressBarColor(),
-              { 'animate-pulse': currentStatus.level === 'alarm' }
+              { 'animate-pulse': currentStatus.level === 'alarm' },
             ]"
             :style="{ width: `${Math.max(2, progressPercentage)}%` }"
           >
@@ -112,23 +91,16 @@
             <div class="text-white font-mono font-black text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">
               {{ formatTime(taktTime) }}
             </div>
-            
+
             <!-- Efeito de piscar quando em alarme -->
-            <div 
-              v-if="currentStatus.level === 'alarm'"
-              class="absolute inset-0 bg-white opacity-30 animate-ping"
-            />
+            <div v-if="currentStatus.level === 'alarm'" class="absolute inset-0 bg-white opacity-30 animate-ping" />
           </div>
         </div>
 
         <!-- Informações adicionais da barra -->
         <div class="flex justify-between items-center mt-3">
-          <span :class="['text-lg opacity-70', getTextColor()]">
-            00:00
-          </span>
-          <span :class="['text-lg font-bold', getTextColor()]">
-            {{ Math.round(progressPercentage) }}% restante
-          </span>
+          <span :class="['text-lg opacity-70', getTextColor()]"> 00:00 </span>
+          <span :class="['text-lg font-bold', getTextColor()]"> {{ Math.round(progressPercentage) }}% restante </span>
           <span :class="['text-lg opacity-70', getTextColor()]">
             {{ formatTime(targetTime) }}
           </span>
@@ -136,86 +108,72 @@
       </div>
 
       <!-- Sinalizador Principal -->
-      <div :class="[
-        'w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full border-8 flex flex-col items-center justify-center shadow-2xl transition-all duration-500',
-        getBorderColor(),
-        {
-          'animate-pulse shadow-red-500/50': currentStatus.level === 'alarm',
-          'shadow-yellow-500/50': currentStatus.level === 'warning'
-        }
-      ]">
+      <div
+        :class="[
+          'w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full border-8 flex flex-col items-center justify-center shadow-2xl transition-all duration-500',
+          getBorderColor(),
+          {
+            'animate-pulse shadow-red-500/50': currentStatus.level === 'alarm',
+            'shadow-yellow-500/50': currentStatus.level === 'warning',
+          },
+        ]"
+      >
         <!-- Status -->
-        <div :class="[
-          'text-3xl md:text-4xl lg:text-5xl font-black mb-4',
-          getTextColor(),
-          { 'animate-bounce': currentStatus.level === 'alarm' }
-        ]">
+        <div
+          :class="[
+            'text-3xl md:text-4xl lg:text-5xl font-black mb-4',
+            getTextColor(),
+            { 'animate-bounce': currentStatus.level === 'alarm' },
+          ]"
+        >
           {{ getStatusText() }}
         </div>
-        
+
         <!-- Setor -->
-        <div :class="[
-          'text-xl md:text-2xl lg:text-3xl font-bold mb-6',
-          getTextColor()
-        ]">
+        <div :class="['text-xl md:text-2xl lg:text-3xl font-bold mb-6', getTextColor()]">
           {{ currentStatus.sectorName }}
         </div>
-        
+
         <!-- Indicador visual adicional -->
-        <div :class="[
-          'w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full shadow-lg',
-          {
-            'bg-green-500': currentStatus.level === 'normal',
-            'bg-yellow-600': currentStatus.level === 'warning',
-            'bg-red-700': currentStatus.level === 'alarm',
-            'animate-ping': currentStatus.level === 'alarm'
-          }
-        ]" />
+        <div
+          :class="[
+            'w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full shadow-lg',
+            {
+              'bg-green-500': currentStatus.level === 'normal',
+              'bg-yellow-600': currentStatus.level === 'warning',
+              'bg-red-700': currentStatus.level === 'alarm',
+              'animate-ping': currentStatus.level === 'alarm',
+            },
+          ]"
+        />
       </div>
 
       <!-- Mensagem de status -->
-      <div class="mt-8 max-w-4xl text-center">
-        <div :class="[
-          'text-lg md:text-xl lg:text-2xl font-semibold mb-2',
-          getTextColor()
-        ]">
-          {{ currentStatus.message }}
-        </div>
-        <div :class="[
-          'text-base opacity-70',
-          getTextColor()
-        ]">
-          Última atualização: {{ currentStatus.timestamp.toLocaleTimeString() }}
-        </div>
-      </div>
     </div>
 
     <!-- Rodapé com informações -->
-    <div class="p-6 text-center ">
-      <div :class="[
-        'text-sm opacity-60',
-        getTextColor()
-      ]">
-        DASS - Sistema de Alarmes de Takt Time | Setor: {{ currentStatus.sectorName }} | 
-        Timer: {{ isRunning ? 'Ativo' : 'Pausado' }}
+    <div class="p-6 text-center">
+      <div :class="['text-sm opacity-60', getTextColor()]">
+        DASS - Sistema de Alarmes de Takt Time | Setor: {{ currentStatus.sectorName }} | Timer:
+        {{ isRunning ? "Ativo" : "Pausado" }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue';
-import { 
-  Bell as BellIcon, 
-  BellOff as BellOffIcon, 
-  Play as PlayIcon, 
-  Pause as PauseIcon, 
-  RotateCcw as RotateCcwIcon, 
-  Clock as ClockIcon 
-} from 'lucide-vue-next';
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from "vue";
+import {
+  Bell as BellIcon,
+  BellOff as BellOffIcon,
+  Play as PlayIcon,
+  Pause as PauseIcon,
+  RotateCcw as RotateCcwIcon,
+  Clock as ClockIcon,
+} from "lucide-vue-next";
 
 interface SignalStatus {
-  level: 'normal' | 'warning' | 'alarm';
+  level: "normal" | "warning" | "alarm";
   sectorName: string;
   timestamp: Date;
   message: string;
@@ -223,10 +181,10 @@ interface SignalStatus {
 
 // Estados reativos
 const currentStatus = reactive<SignalStatus>({
-  level: 'normal',
-  sectorName: 'Costura',
+  level: "normal",
+  sectorName: "Costura",
   timestamp: new Date(),
-  message: 'Sistema funcionando normalmente'
+  message: "Sistema funcionando normalmente",
 });
 
 const taktTime = ref(120); // Tempo atual em segundos
@@ -243,69 +201,84 @@ const progressPercentage = computed(() => (taktTime.value / targetTime.value) * 
 // Funções helper
 const getBackgroundColor = () => {
   switch (currentStatus.level) {
-    case 'alarm': return 'bg-red-500';
-    case 'warning': return 'bg-yellow-500';
-    case 'normal': return 'bg-white';
+    case "alarm":
+      return "bg-red-500";
+    case "warning":
+      return "bg-yellow-500";
+    case "normal":
+      return "bg-white";
   }
 };
 
 const getTextColor = () => {
   switch (currentStatus.level) {
-    case 'alarm': return 'text-white';
-    case 'warning': return 'text-black';
-    case 'normal': return 'text-black';
+    case "alarm":
+      return "text-white";
+    case "warning":
+      return "text-black";
+    case "normal":
+      return "text-black";
   }
 };
 
 const getBorderColor = () => {
   switch (currentStatus.level) {
-    case 'alarm': return 'border-red-700';
-    case 'warning': return 'border-yellow-700';
-    case 'normal': return 'border-gray-300';
+    case "alarm":
+      return "border-red-700";
+    case "warning":
+      return "border-yellow-700";
+    case "normal":
+      return "border-gray-300";
   }
 };
 
 const getStatusText = () => {
   switch (currentStatus.level) {
-    case 'alarm': return 'ALARME';
-    case 'warning': return 'ATENÇÃO';
-    case 'normal': return 'NORMAL';
+    case "alarm":
+      return "ALARME";
+    case "warning":
+      return "ATENÇÃO";
+    case "normal":
+      return "NORMAL";
   }
 };
 
 const getProgressBarColor = () => {
   switch (currentStatus.level) {
-    case 'alarm': return 'bg-red-600';
-    case 'warning': return 'bg-yellow-600';
-    case 'normal': return 'bg-green-500';
+    case "alarm":
+      return "bg-red-600";
+    case "warning":
+      return "bg-yellow-600";
+    case "normal":
+      return "bg-green-500";
   }
 };
 
 const formatTime = (seconds: number) => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
 
 // Função para tocar som de alarme
 const playAlarmSound = () => {
   if (!soundEnabled.value) return;
-  
+
   const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
   const oscillator = audioContext.createOscillator();
   const gainNode = audioContext.createGain();
-  
+
   oscillator.connect(gainNode);
   gainNode.connect(audioContext.destination);
-  
+
   // Som mais alto para alarme
   oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
   oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.15);
   oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.3);
-  
+
   gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
   gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-  
+
   oscillator.start(audioContext.currentTime);
   oscillator.stop(audioContext.currentTime + 0.5);
 };
@@ -314,10 +287,10 @@ const playAlarmSound = () => {
 const resetTimer = () => {
   taktTime.value = targetTime.value;
   Object.assign(currentStatus, {
-    level: 'normal',
+    level: "normal",
     sectorName: currentStatus.sectorName,
     timestamp: new Date(),
-    message: 'Sistema funcionando normalmente'
+    message: "Sistema funcionando normalmente",
   });
 };
 
@@ -328,10 +301,10 @@ const toggleTimer = () => {
 const simulateAlarm = () => {
   taktTime.value = 0;
   Object.assign(currentStatus, {
-    level: 'alarm',
+    level: "alarm",
     sectorName: currentStatus.sectorName,
     timestamp: new Date(),
-    message: 'TESTE: Simulação de alarme ativada'
+    message: "TESTE: Simulação de alarme ativada",
   });
   playAlarmSound();
 };
@@ -339,34 +312,34 @@ const simulateAlarm = () => {
 const simulateWarning = () => {
   taktTime.value = 30;
   Object.assign(currentStatus, {
-    level: 'warning',
+    level: "warning",
     sectorName: currentStatus.sectorName,
     timestamp: new Date(),
-    message: 'TESTE: Simulação de atenção ativada'
+    message: "TESTE: Simulação de atenção ativada",
   });
 };
 
 // Timer para decrementar takt_time
 const startTimer = () => {
   if (timerInterval) clearInterval(timerInterval);
-  
+
   timerInterval = setInterval(() => {
     if (!isRunning.value) return;
 
     const prevTime = taktTime.value;
     const newTime = Math.max(0, prevTime - 1);
     taktTime.value = newTime;
-    
+
     // Determinar o status baseado no tempo restante
     let newStatus: Partial<SignalStatus>;
-    
+
     if (newTime === 0) {
       // Alarme - tempo zerado
       newStatus = {
-        level: 'alarm',
+        level: "alarm",
         sectorName: currentStatus.sectorName,
         timestamp: new Date(),
-        message: 'ALARME: Takt Time zerado - Parada de produção'
+        message: "ALARME: Takt Time zerado - Parada de produção",
       };
       // Tocar alarme apenas quando acabou de chegar a zero
       if (prevTime > 0) {
@@ -375,21 +348,21 @@ const startTimer = () => {
     } else if (newTime <= 60) {
       // Warning - falta 1 minuto ou menos
       newStatus = {
-        level: 'warning',
+        level: "warning",
         sectorName: currentStatus.sectorName,
         timestamp: new Date(),
-        message: `ATENÇÃO: Faltam ${newTime} segundos para o takt time`
+        message: `ATENÇÃO: Faltam ${newTime} segundos para o takt time`,
       };
     } else {
       // Normal - mais de 1 minuto restante
       newStatus = {
-        level: 'normal',
+        level: "normal",
         sectorName: currentStatus.sectorName,
         timestamp: new Date(),
-        message: 'Sistema funcionando normalmente'
+        message: "Sistema funcionando normalmente",
       };
     }
-    
+
     Object.assign(currentStatus, newStatus);
   }, 1000);
 };
