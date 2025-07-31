@@ -6,8 +6,9 @@
       :style="{ transform: showControls ? 'translateY(0)' : 'translateY(-100%)' }"
       @mouseenter="showControls = true"
     >
-      <div class="bg-black/80 backdrop-blur-sm p-4 flex justify-between items-center">
+      <div class="bg-black/80 backdrop-blur-sm p-4 flex flex-wrap gap-2 justify-between items-center">
         <div class="flex items-center gap-4">
+          
           <span class="text-white">Setor: {{ currentStatus.sectorName }}</span>
           <span class="text-white">Meta: {{ formatTime(targetTime) }}</span>
           <button
@@ -59,13 +60,13 @@
     <div class="h-4 w-full cursor-pointer" @mouseenter="showControls = true" @mouseleave="showControls = false" />
 
     <!-- Conteúdo principal -->
-    <div class="flex-1 flex flex-col items-center justify-center p-2">
+    <div class="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:px-6 md:px12">
       <!-- Logo/Nome DASS -->
-      <div class="mb-3">
+      <div class="mb-6 text-center">
         <h1 :class="['text-6xl md:text-7xl lg:text-8xl font-black tracking-wider drop-shadow-lg', getTextColor()]">
           DASS
         </h1>
-
+         <div class="flex flex-col md:flex-row gap-4"></div>
         <div class="flex flex-row">
           <ClockIcon :class="['h-8 w-8', getTextColor()]" />
           <h2 :class="['text-3xl md:text-4xl font-bold ml-2', getTextColor()]">TAKT TIME</h2>
@@ -78,7 +79,7 @@
         <div class="text-center mb-4 flex items-center justify-center gap-3"></div>
 
         <!-- Container da barra de progresso -->
-        <div class="bg-gray-200 rounded-lg h-20 md:h-24 lg:h-28 overflow-hidden shadow-lg border-4 border-gray-300">
+        <div class="w-full bg-gray-200 rounded-lg h-20 sm:h-24 md:h-28 overflow-hidden shadow-lg border-4 border-gray-300">
           <div
             :class="[
               'h-full transition-all duration-1000 ease-linear flex items-center justify-center relative',
@@ -98,7 +99,7 @@
         </div>
 
         <!-- Informações adicionais da barra -->
-        <div class="flex justify-between items-center mt-3">
+        <div class="flex justify-between items-center mt-3 text-xs sm:text-sm md:text-lg">
           <span :class="['text-lg opacity-70', getTextColor()]"> 00:00 </span>
           <span :class="['text-lg font-bold', getTextColor()]"> {{ Math.round(progressPercentage) }}% restante </span>
           <span :class="['text-lg opacity-70', getTextColor()]">
@@ -152,7 +153,7 @@
     </div>
 
     <!-- Rodapé com informações -->
-    <div class="p-6 text-center">
+    <div class="px-4 py-6 text-center text-xs sm:text-sm">
       <div :class="['text-sm opacity-60', getTextColor()]">
         DASS - Sistema de Alarmes de Takt Time | Setor: {{ currentStatus.sectorName }} | Timer:
         {{ isRunning ? "Ativo" : "Pausado" }}
