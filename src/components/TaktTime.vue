@@ -388,10 +388,14 @@ const startTimer = () => {
 const wsConnected = ref(false);
 const WsClient = shallowRef<WebSocket | null>(null);
 let heartBeatInterval: number | null = null;
+const lastPingTime = ref<number | null>(null); // TODO: Continuar logica de verificação de ping/pong heartbeat
 let retries = 0;
 
 const heartBeat = (ws: WebSocket) => {
   if (ws && wsConnected.value) {
+    console.log('oinging');
+    
+    lastPingTime.value = Date.now();
     ws.send(JSON.stringify({ type: "ping" }));
   }
 };
@@ -410,11 +414,6 @@ function connect() {
       payload: { id: "cost-2-2408" },
     };
     ws.send(JSON.stringify(registerMessage));
-  });
-
-  ws.addEventListener("ping", () => {
-    console.log("Recebido ping, respondendo com pong");
-    ws.send(JSON.stringify({ type: "pong" }));
   });
 
   ws.onmessage = (event) => {
@@ -450,7 +449,7 @@ function connect() {
   });
 
   if (heartBeatInterval) clearInterval(heartBeatInterval);
-  heartBeatInterval = setInterval(() => heartBeat(ws), 5000);
+  heartBeatInterval = setInterval(() => heartBeat(ws), 30000);
 }
 
 onMounted(() => {
