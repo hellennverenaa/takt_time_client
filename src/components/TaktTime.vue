@@ -72,83 +72,98 @@
         </div>
       </div>
 
-      <!-- Barra de Takt Time - Elemento Principal -->
-      <div class="w-full max-w-4xl mb-8">
-        <!-- Título da barra -->
-        <div class="text-center mb-4 flex items-center justify-center gap-3"></div>
+      <!-- Indicadores de status -->
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <h1 class="">Estabelecendo Conexão...</h1>
+        </div>
+        
+        <div class="blur">
+          <!-- Barra Progresso Takt Time -->
+          <div class="w-full max-w-4xl mb-8">
+            <!-- Título da barra -->
+            <div class="text-center mb-4 flex items-center justify-center gap-3"></div>
 
-        <!-- Container da barra de progresso -->
-        <div class="bg-gray-200 rounded-lg h-20 md:h-24 lg:h-28 overflow-hidden shadow-lg border-4 border-gray-300">
+            <!-- Barra de progresso -->
+            <div>
+              <div
+                class="bg-gray-200 rounded-lg h-20 md:h-24 lg:h-28 overflow-hidden shadow-lg border-4 border-gray-300"
+              >
+                <div
+                  :class="[
+                    'h-full transition-all duration-1000 ease-linear flex items-center justify-center relative',
+                    getProgressBarColor(),
+                    { 'animate-pulse': currentStatus.level === 'alarm' },
+                  ]"
+                  :style="{ width: `${Math.max(2, progressPercentage)}%` }"
+                >
+                  <!-- Tempo restante sobre a barra -->
+                  <div class="text-white font-mono font-black text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">
+                    {{ formatTime(taktTime) }}
+                  </div>
+
+                  <!-- Efeito de piscar quando em alarme -->
+                  <div
+                    v-if="currentStatus.level === 'alarm'"
+                    class="absolute inset-0 bg-white opacity-30 animate-ping"
+                  />
+                </div>
+              </div>
+
+              <!-- Informações adicionais da barra -->
+              <div class="flex justify-between items-center mt-3">
+                <span :class="['text-lg opacity-70', getTextColor()]"> 00:00 </span>
+                <span :class="['text-lg font-bold', getTextColor()]">
+                  {{ Math.round(progressPercentage) }}% restante
+                </span>
+                <span :class="['text-lg opacity-70', getTextColor()]">
+                  {{ formatTime(targetTime) }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sinalizador Principal -->
           <div
             :class="[
-              'h-full transition-all duration-1000 ease-linear flex items-center justify-center relative',
-              getProgressBarColor(),
-              { 'animate-pulse': currentStatus.level === 'alarm' },
+              'w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full border-8 flex flex-col items-center justify-center shadow-2xl transition-all duration-500',
+              getBorderColor(),
+              {
+                'animate-pulse shadow-red-500/50': currentStatus.level === 'alarm',
+                'shadow-yellow-500/50': currentStatus.level === 'warning',
+              },
             ]"
-            :style="{ width: `${Math.max(2, progressPercentage)}%` }"
           >
-            <!-- Tempo restante sobre a barra -->
-            <div class="text-white font-mono font-black text-2xl md:text-3xl lg:text-4xl drop-shadow-lg">
-              {{ formatTime(taktTime) }}
+            <!-- Status -->
+            <div
+              :class="[
+                'text-3xl md:text-4xl lg:text-5xl font-black mb-4',
+                getTextColor(),
+                { 'animate-bounce': currentStatus.level === 'alarm' },
+              ]"
+            >
+              {{ getStatusText() }}
             </div>
 
-            <!-- Efeito de piscar quando em alarme -->
-            <div v-if="currentStatus.level === 'alarm'" class="absolute inset-0 bg-white opacity-30 animate-ping" />
+            <!-- Setor -->
+            <div :class="['text-xl md:text-2xl lg:text-3xl font-bold mb-6', getTextColor()]">
+              {{ currentStatus.sectorName }}
+            </div>
+
+            <div
+              :class="[
+                'w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full shadow-lg',
+                {
+                  'bg-green-500': currentStatus.level === 'normal',
+                  'bg-yellow-600': currentStatus.level === 'warning',
+                  'bg-red-700': currentStatus.level === 'alarm',
+                  'animate-ping': currentStatus.level === 'alarm',
+                },
+              ]"
+            />
           </div>
         </div>
-
-        <!-- Informações adicionais da barra -->
-        <div class="flex justify-between items-center mt-3">
-          <span :class="['text-lg opacity-70', getTextColor()]"> 00:00 </span>
-          <span :class="['text-lg font-bold', getTextColor()]"> {{ Math.round(progressPercentage) }}% restante </span>
-          <span :class="['text-lg opacity-70', getTextColor()]">
-            {{ formatTime(targetTime) }}
-          </span>
-        </div>
       </div>
-
-      <!-- Sinalizador Principal -->
-      <div
-        :class="[
-          'w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full border-8 flex flex-col items-center justify-center shadow-2xl transition-all duration-500',
-          getBorderColor(),
-          {
-            'animate-pulse shadow-red-500/50': currentStatus.level === 'alarm',
-            'shadow-yellow-500/50': currentStatus.level === 'warning',
-          },
-        ]"
-      >
-        <!-- Status -->
-        <div
-          :class="[
-            'text-3xl md:text-4xl lg:text-5xl font-black mb-4',
-            getTextColor(),
-            { 'animate-bounce': currentStatus.level === 'alarm' },
-          ]"
-        >
-          {{ getStatusText() }}
-        </div>
-
-        <!-- Setor -->
-        <div :class="['text-xl md:text-2xl lg:text-3xl font-bold mb-6', getTextColor()]">
-          {{ currentStatus.sectorName }}
-        </div>
-
-        <!-- Indicador visual adicional -->
-        <div
-          :class="[
-            'w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full shadow-lg',
-            {
-              'bg-green-500': currentStatus.level === 'normal',
-              'bg-yellow-600': currentStatus.level === 'warning',
-              'bg-red-700': currentStatus.level === 'alarm',
-              'animate-ping': currentStatus.level === 'alarm',
-            },
-          ]"
-        />
-      </div>
-
-      <!-- Mensagem de status -->
     </div>
 
     <!-- Rodapé com informações -->
@@ -171,6 +186,7 @@ import {
   RotateCcw as RotateCcwIcon,
   Clock as ClockIcon,
 } from "lucide-vue-next";
+import { API_URL, WS_URL } from "../config/ip";
 
 interface SignalStatus {
   level: "normal" | "warning" | "alarm";
@@ -187,7 +203,7 @@ const currentStatus = reactive<SignalStatus>({
   message: "Sistema funcionando normalmente",
 });
 
-const taktTime = ref(120); // Tempo atual em segundos
+const taktTime = ref(30); // Tempo atual em segundos
 const targetTime = ref(120); // Tempo meta em segundos
 const isRunning = ref(true); // Se o timer está rodando
 const soundEnabled = ref(true);
@@ -369,7 +385,41 @@ const startTimer = () => {
 
 // Lifecycle hooks
 onMounted(() => {
-  startTimer();
+  // startTimer();
+  const WsClient = new WebSocket(WS_URL);
+  if (WsClient) {
+    WsClient.onopen = () => {
+      console.log("WebSocket conectado");
+      const registerMessage = {
+        type: "register",
+        payload: {
+          id: "cost-2-2408",
+        },
+      };
+      WsClient.send(JSON.stringify(registerMessage));
+    };
+
+    // WsClient.onmessage = (event) => {
+    //   const data = JSON.parse(event.data);
+    //   if (data.taktTime) {
+    //     taktTime.value = data.taktTime;
+    //   }
+    //   if (data.targetTime) {
+    //     targetTime.value = data.targetTime;
+    //   }
+    //   if (data.status) {
+    //     Object.assign(currentStatus, data.status);
+    //   }
+    // };
+
+    // WsClient.onclose = () => {
+    //   console.log("WebSocket desconectado");
+    // };
+
+    // WsClient.onerror = (error) => {
+    //   console.error("Erro no WebSocket:", error);
+    // };
+  }
 });
 
 onUnmounted(() => {
