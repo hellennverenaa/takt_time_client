@@ -5,6 +5,7 @@
       class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300"
       :style="{ transform: showControls ? 'translateY(0)' : 'translateY(-100%)' }"
       @mouseenter="showControls = true"
+      @mouseleave="showControls = false"
     >
       <div class="bg-black/80 backdrop-blur-sm p-4 flex justify-between items-center">
         <div class="flex items-center gap-4">
@@ -180,8 +181,7 @@
     </div>
 
     <!-- Confirmação Revisora -->
-     <RevisoraConfirm v-model:openTaktConfirmDialog="openTaktConfirmDialog" /> 
-
+     <RevisoraConfirm v-model:openTaktConfirmDialog="openTaktConfirmDialog" @resetTaktTime="resetTaktTime" /> 
     <!-- Rodapé com informações -->
     <div class="p-6 text-center">
       <div :class="['text-sm opacity-60', getTextColor()]">
@@ -193,7 +193,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, reactive, computed, onMounted, onUnmounted, watch } from "vue";
+import { ref, shallowRef, reactive, computed, onMounted, onUnmounted, watch, defineEmits } from "vue";
 import {
   Bell as BellIcon,
   BellOff as BellOffIcon,
@@ -390,6 +390,13 @@ const startTimer = () => {
     Object.assign(currentStatus, newStatus);
   }, 1000);
 };
+
+// Reseta o Takt após a confirmação do dialogo de aviso
+const resetTaktTime = (time: string) => {
+console.log("Tempo de dialogo aberto: ", time);
+isRunning.value = false
+resetTimer()
+}
 
 // Lifecycle hooks
 const wsConnected = ref(false);
