@@ -7,8 +7,9 @@
       @mouseenter="showControls = true"
       @mouseleave="showControls = false"
     >
-      <div class="bg-black/80 backdrop-blur-sm p-4 flex justify-between items-center">
+      <div class="bg-black/80 backdrop-blur-sm p-4 flex flex-wrap gap-2 justify-between items-center">
         <div class="flex items-center gap-4">
+          
           <span class="text-white">Setor: {{ currentStatus.sectorName }}</span>
           <span class="text-white">Meta: {{ formatTime(targetTime) }}</span>
           <button
@@ -60,13 +61,13 @@
     <div class="h-4 w-full cursor-pointer" @mouseenter="showControls = true" @mouseleave="showControls = false" />
 
     <!-- Conteúdo principal -->
-    <div class="flex-1 flex flex-col items-center justify-center p-2">
+    <div class="flex-1 flex flex-col items-center justify-center px-4 py-6 sm:px-6 md:px12">
       <!-- Logo/Nome DASS -->
-      <div class="mb-3">
+      <div class="mb-6 text-center">
         <h1 :class="['text-6xl md:text-7xl lg:text-8xl font-black tracking-wider drop-shadow-lg', getTextColor()]">
           DASS
         </h1>
-
+         <div class="flex flex-col md:flex-row gap-4"></div>
         <div class="flex flex-row">
           <ClockIcon :class="['h-8 w-8', getTextColor()]" />
           <h2 :class="['text-3xl md:text-4xl font-bold ml-2', getTextColor()]">TAKT TIME</h2>
@@ -183,7 +184,7 @@
     <!-- Confirmação Revisora -->
      <RevisoraConfirm v-model:openTaktConfirmDialog="openTaktConfirmDialog" @resetTaktTime="resetTaktTime" /> 
     <!-- Rodapé com informações -->
-    <div class="p-6 text-center">
+    <div class="px-4 py-6 text-center text-xs sm:text-sm">
       <div :class="['text-sm opacity-60', getTextColor()]">
         DASS - Sistema de Alarmes de Takt Time | Setor: {{ currentStatus.sectorName }} | Timer:
         {{ isRunning ? "Ativo" : "Pausado" }}
