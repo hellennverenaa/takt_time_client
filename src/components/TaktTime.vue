@@ -388,14 +388,19 @@ const startTimer = () => {
 const wsConnected = ref(false);
 const WsClient = shallowRef<WebSocket | null>(null);
 let heartBeatInterval: number | null = null;
-const lastPingTime = ref<number | null>(null); // TODO: Continuar logica de verificação de ping/pong heartbeat
+const lastPongTime = ref<number | null>(null); // HeartBeat last ping time
 let retries = 0;
 
 const heartBeat = (ws: WebSocket) => {
   if (ws && wsConnected.value) {
-    console.log('oinging');
-    
-    lastPingTime.value = Date.now();
+    // console.log("pinging server...");
+
+    if (lastPongTime.value && Date.now() - lastPongTime.value > 40000) {
+      console.warn("Servidor não está respondendo. Tentando reconectar...");
+      ws.close();
+      connect();
+      return;
+    }
     ws.send(JSON.stringify({ type: "ping" }));
   }
 };
@@ -428,6 +433,12 @@ function connect() {
         console.log(`${message} (ID: ${clientId})`);
 
         startTimer();
+      } else if (data.type === "pong") {
+        lastPongTime.value = Date.now();
+      } else if (data.type === "error") {
+        console.error("Erro recebido do servidor:", data.message);
+      } else {
+        console.warn("Mensagem desconhecida recebida:", data);
       }
     } catch {
       console.log("Mensagem não-JSON:", event.data);
@@ -438,7 +449,7 @@ function connect() {
     console.log("WebSocket desconectado");
     wsConnected.value = false;
     // backoff exponencial simples
-    const delay = Math.min(30000, 1000 * 2 ** retries++);
+    const delay = Math.min(15000, 1000 * 2 ** retries++);
     setTimeout(connect, delay);
   });
 
@@ -449,7 +460,7 @@ function connect() {
   });
 
   if (heartBeatInterval) clearInterval(heartBeatInterval);
-  heartBeatInterval = setInterval(() => heartBeat(ws), 30000);
+  heartBeatInterval = setInterval(() => heartBeat(ws), 10000);
 }
 
 onMounted(() => {
@@ -489,6 +500,25 @@ watch(isRunning, () => {
   animation: fade-in 0.35s ease-out both;
 }
 
+.loading-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: rgb(59 130 246); /* blue-500 */
+  display: inline-block;
+  animation: dot 1.2s ease-in-out infinite;
+}
+
+.loading-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.loading-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.loading-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
 @keyframes dot {
   0%,
   80%,
@@ -500,13 +530,5 @@ watch(isRunning, () => {
     opacity: 1;
     transform: translateY(-2px);
   }
-}
-.loading-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 9999px;
-  background: rgb(59 130 246); /* blue-500 */
-  display: inline-block;
-  animation: dot 1.2s ease-in-out infinite;
 }
 </style>
