@@ -191,6 +191,8 @@
       </div>
     </div>
   </div>
+
+  <FormularioEntrada/>
 </template>
 
 <script setup lang="ts">
@@ -213,6 +215,7 @@ interface SignalStatus {
   timestamp: Date;
   message: string;
 }
+import FormularioEntrada from "./FormularioEntrada.vue";
 
 // Estados reativos
 const currentStatus = reactive<SignalStatus>({
