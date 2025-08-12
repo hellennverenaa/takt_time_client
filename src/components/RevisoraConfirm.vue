@@ -49,6 +49,7 @@ watch(openTaktConfirmDialog, (newValue) => {
 
 const emit = defineEmits<{
   (e: "update:openTaktConfirmDialog", value: boolean): void;
+  (e: "resetTaktTime", value: any): void;
 }>();
 
 const close = () => {
@@ -63,7 +64,7 @@ const confirm = () => {
   dialogDuration.value = Math.round(
     (dialogClosedTimestamp.value!.getTime() - dialogOpenedTimestamp.value!.getTime()) / 1000
   );
-  console.log("Duração do diálogo:", dialogDuration.value, "segundos");
+  emit("resetTaktTime", dialogDuration.value);
 };
 
 const reject = () => {
@@ -74,7 +75,7 @@ const reject = () => {
   dialogDuration.value = Math.round(
     (dialogClosedTimestamp.value!.getTime() - dialogOpenedTimestamp.value!.getTime()) / 1000
   );
-  console.log("Duração do diálogo:", dialogDuration.value, "segundos");
+  emit("resetTaktTime", dialogDuration.value);
 };
 </script>
 
