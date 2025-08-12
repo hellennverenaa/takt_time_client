@@ -179,6 +179,9 @@
       </div>
     </div>
 
+    <!-- Confirmação Revisora -->
+     <RevisoraConfirm v-model:openTaktConfirmDialog="openTaktConfirmDialog" /> 
+
     <!-- Rodapé com informações -->
     <div class="p-6 text-center">
       <div :class="['text-sm opacity-60', getTextColor()]">
@@ -201,6 +204,7 @@ import {
 } from "lucide-vue-next";
 import { API_URL, WS_URL } from "../config/ip";
 import alarmSound from "../assets/alarme.wav";
+import RevisoraConfirm from "./RevisoraConfirm.vue";
 
 interface SignalStatus {
   level: "normal" | "warning" | "alarm";
@@ -290,7 +294,7 @@ const formatTime = (seconds: number) => {
   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
 
-// Função para tocar som de alarme
+// Função para tocar som de alarme e alertar conclusão de takt time
 const playAlarmSound = () => {
   if (!soundEnabled.value) return;
   const audio = new Audio(alarmSound);
@@ -336,6 +340,8 @@ const simulateWarning = () => {
   });
 };
 
+// Variavel responsavel por abrir o diálogo de confirmação após fim de takt time
+const openTaktConfirmDialog = ref(false)
 // Timer para decrementar takt_time
 const startTimer = () => {
   if (timerInterval) clearInterval(timerInterval);
@@ -358,10 +364,11 @@ const startTimer = () => {
         timestamp: new Date(),
         message: "ALARME: Takt Time zerado - Parada de produção",
       };
-      // Tocar alarme apenas quando acabou de chegar a zero
+
       playAlarmSound();
-      // if (prevTime > 0) {
-      // }
+      if (newTime === 0) {
+        openTaktConfirmDialog.value = true; // Abre o diálogo de confirmação
+      }
     } else if (newTime <= 30) {
       // Warning - falta 1 minuto ou menos
       newStatus = {
