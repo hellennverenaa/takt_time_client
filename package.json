@@ -9,9 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.7",
+    "bootstrap-icons": "^1.13.1",
     "core-js": "^3.8.3",
     "lucide-vue-next": "^0.535.0",
     "vue": "^3.5.18",
+    "vuetify": "^3.9.5",
     "ws": "^8.18.3"
   },
   "devDependencies": {
